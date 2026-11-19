@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autorização · Mensagem da Paróquia</title>
+<style>
+  :root { color-scheme: dark }
+  body { margin:0; background:#0b0a0c; color:#f5efe6; font:16px/1.7 Georgia, serif }
+  main { max-width: 760px; margin: 0 auto; padding: 64px 24px 96px }
+  h1 { font-size: 30px; color:#eab839; margin:0 0 20px }
+  p { color:#d8d2c8 }
+  code { display:block; background:#17150f; border:1px solid rgba(234,184,57,.4);
+    border-radius:10px; padding:18px; margin:18px 0; font-family: ui-monospace, Consolas, monospace;
+    font-size:15px; word-break: break-all; color:#eab839; user-select: all }
+  .erro { color:#ff9c8a }
+  .dica { color:#8a857c; font-size:14px }
+</style>
+</head>
+<body>
+<main>
+<h1 id="titulo">Autorização do aplicativo</h1>
+<p id="msg">Lendo a resposta do TikTok…</p>
+<code id="codigo" hidden></code>
+<p class="dica" id="dica" hidden>Copie o código acima e cole na conversa com o assistente. Ele vale por poucos minutos e serve uma única vez.</p>
+</main>
+<script>
+  const p = new URLSearchParams(location.search);
+  const codigo = p.get("code");
+  const erro = p.get("error");
+  const desc = p.get("error_description");
+  const elCodigo = document.getElementById("codigo");
+  const elMsg = document.getElementById("msg");
+  const elDica = document.getElementById("dica");
+
+  if (codigo) {
+    document.getElementById("titulo").textContent = "Autorização concluída";
+    elMsg.textContent = "Código de autorização:";
+    elCodigo.hidden = false;
+    elCodigo.textContent = codigo;
+    elDica.hidden = false;
+    elCodigo.addEventListener("click", () => {
+      navigator.clipboard.writeText(codigo).then(() => {
+        elDica.textContent = "Copiado. Cole na conversa com o assistente.";
+      });
+    });
+  } else if (erro) {
+    elMsg.className = "erro";
+    elMsg.textContent = "O TikTok recusou a autorização: " + erro + (desc ? " — " + desc : "");
+  } else {
+    elMsg.textContent = "Nenhum código veio na resposta. Refaça a autorização.";
+  }
+</script>
+</body>
+</html>
